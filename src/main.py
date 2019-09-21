@@ -246,6 +246,30 @@ def delete_player(id):
 
     return jsonify(user1.serialize()), 200
 
+# @app.route('/sync_database', methods=['POST'])
+# def delete_player(id):
+
+#     user1 = User(full_name='Juan Estebas', email=body["email"], screen_name=body["screen_name"], password=body["password"])
+#     db.session.add(user1)
+#     db.session.commit()
+
+
+#     user2 = User(full_name=body["full_name"], email=body["email"], screen_name=body["screen_name"], password=body["password"])
+#     db.session.add(user1)
+#     db.session.commit()
+
+#     return "ok"
+
+
+
+
+
+
+
+
+
+
+
 
 
 # this only runs if `$ python src/main.py` is exercuted
