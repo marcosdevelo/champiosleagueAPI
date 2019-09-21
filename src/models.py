@@ -5,10 +5,10 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String(80), unique=True, nullable=False)
+    full_name = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     screen_name = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), unique=False, nullable=False)
 
 
     def __repr__(self):
@@ -37,10 +37,9 @@ class Game(db.Model):
     def serialize(self):
         return {
             "id":self.id,
-            "user_id": self.full_name,
-            "email": self.email,
-            "team_id": self.screen_name,
-            "computer_team_id": self.password,
+            "user_id": self.user_id,
+            "team_id": self.team_id,
+            "computer_team_id": self.computer_team_id,
             }
 
 class Activity(db.Model):
@@ -64,32 +63,36 @@ class Teams(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     team_id = db.Column(db.String(120), unique=True, nullable=False)
-    fixture_id = db.Column(db.String(120), unique=True, nullable=False)
-    activity_id = db.Column(db.String(120), unique=True, nullable=False)
-
+    teamLogo= db.Column(db.String(300), unique=True, nullable=False)
+    players = db.relationship('Player',backref='teams', lazy=True)
 
     def __repr__(self):
-        return '<Person %r>' % self.team_id
+        return '<Person %r>' % self.teamLogo
 
     def serialize(self):
         return {
             "id":self.id,
             "name": self.name,
             "team_id": self.team_id,
-            "fixture_id": self.fixture_id,
-            "activity_id": self.activity_id,
+            "teamLogo": self.teamLogo,
+            "players": list(map(lambda x: x.serialize(), self.players))
             }
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    team_id = db.Column(db.String(80), unique=True, nullable=False)
-    attack = db.Column(db.String(80), unique=True, nullable=False)
-    defense = db.Column(db.String(80), unique=True, nullable=False)
-    player_id = db.Column(db.String(120), unique=True, nullable=False)
-    team_goals = db.Column(db.String(100), unique=True, nullable=False)
-    team_passes = db.Column(db.String(120), unique=True, nullable=False)
-    team_fouls = db.Column(db.String(120), unique=True, nullable=False)
-    team_blocked_shots = db.Column(db.String(120), unique=True, nullable=False)
+    team_id= db.Column(db.Integer, db.ForeignKey('teams.id'), nullable=True)
+    name= db.Column(db.String(80), unique=False, nullable=False)
+    position= db.Column(db.String(80), unique=False, nullable=False)
+    image= db.Column(db.String(200), unique=False, nullable=False)
+    attack = db.Column(db.String(80), unique=False, nullable=False)
+    defense = db.Column(db.String(80), unique=False, nullable=False)
+    player_id = db.Column(db.String(120), unique=False, nullable=False)
+    season = db.Column(db.String(80), unique=False, nullable=False)
+    goals_total = db.Column(db.String(100), unique=False, nullable=False)
+    goals_conceded = db.Column(db.String(100), unique=False, nullable=False)
+    passes_total = db.Column(db.String(120), unique=False, nullable=False)
+    tackles_total = db.Column(db.String(120), unique=False, nullable=False)
+    shots_total = db.Column(db.String(120), unique=False, nullable=False)
 
 
     def __repr__(self):
@@ -99,11 +102,16 @@ class Player(db.Model):
         return {
             "id":self.id,
             "team_id":self.team_id,
+            "name":self.name,
+            "position":self.position,
+            "image":self.image,
             "attack":self.attack,
             "defense": self.defense,
             "player_id": self.player_id,
-            "team_goals": self.team_goals,
-            "team_passes": self.team_passes,
-            "team_fouls": self.team_fouls,
-            "team_blocked_shots": self.team_blocked_shots,
+            "season": self.season,
+            "goals_total": self.goals_total,
+            "goals_conceded": self.goals_conceded,
+            "passes_total": self.passes_total,
+            "tackles_total": self.tackles_total,
+            "shots_total": self.shots_total,
             }
